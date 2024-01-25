@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone') {
+            steps {
+                // Clona o repositório
+                checkout scm
+            }
+        }
+
+        stage('Backend Deploy') {
+            steps {
+                script {
+                    // Entra no diretório do backend
+                    dir('backend') {
+                        // Pode ser necessário instalar as dependências
+                        bat 'npm install'
+                        // Constrói o backend (ajuste conforme seu projeto)
+                        bat 'npm run build'
+                        // Executa o script de deploy do backend
+                        bat 'deploy-backend.bat' // ou ajuste para o nome correto do seu script de deploy
+                    }
+                }
+            }
+        }
+
+        stage('Frontend Deploy') {
+            steps {
+                script {
+                    // Entra no diretório do frontend
+                    dir('frontend') {
+                        // Pode ser necessário instalar as dependências
+                        bat 'npm install'
+                        // Constrói o frontend (ajuste conforme seu projeto)
+                        bat 'npm run build'
+                        // Executa o script de deploy do frontend
+                        bat 'deploy-frontend.bat' // ou ajuste para o nome correto do seu script de deploy
+                    }
+                }
+            }
+        }
+    }
+}
