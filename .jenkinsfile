@@ -2,43 +2,41 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone') {
+        stage('Checkout') {
             steps {
-                // Clona o repositório
-                checkout scm
-            }
-        }
-
-        stage('Backend Deploy') {
-            steps {
+                // Checkout do código do repositório
                 script {
-                    // Entra no diretório do backend
-                    dir('backend') {
-                        // Pode ser necessário instalar as dependências
-                        bat 'npm install'
-                        // Constrói o backend (ajuste conforme seu projeto)
-                        bat 'npm run build'
-                        // Executa o script de deploy do backend
-                        bat 'deploy-backend.bat' // ou ajuste para o nome correto do seu script de deploy
-                    }
+                    git branch: 'patch-1', url: 'https://github.com/Yamazaki-Khaio/Projeto-Dev-1.git'
                 }
             }
         }
 
-        stage('Frontend Deploy') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    // Entra no diretório do frontend
-                    dir('frontend') {
-                        // Pode ser necessário instalar as dependências
-                        bat 'npm install'
-                        // Constrói o frontend (ajuste conforme seu projeto)
-                        bat 'npm run build'
-                        // Executa o script de deploy do frontend
-                        bat 'deploy-frontend.bat' // ou ajuste para o nome correto do seu script de deploy
-                    }
+                // Navegue até o diretório do backend
+                dir('backend') {
+                    // Instale as dependências usando npm
+                    bat 'npm install'
                 }
             }
+        }
+
+        stage('Build') {
+            steps {
+                // Navegue até o diretório do backend
+                dir('backend') {
+                    // Execute o build usando npm
+                    bat 'npm run build'
+                }
+            }
+        }
+
+        // Adicione mais estágios conforme necessário, como testes, implantação, etc.
+    }
+
+    post {
+        always {
+            // Realize ações pós-build, se necessário
         }
     }
 }
